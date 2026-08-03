@@ -10,29 +10,29 @@
         }
         
         body {
-            width: 300px;
-            min-height: 400px;
+            width: 280px;
+            min-height: 240px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
             color: #e0e0e0;
-            padding: 16px;
+            padding: 16px 20px;
         }
         
         .header {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #333;
         }
         
         .header-icon {
-            font-size: 24px;
+            font-size: 22px;
         }
         
         .header h1 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
             background: linear-gradient(90deg, #3ea6ff, #5b8cff);
             -webkit-background-clip: text;
@@ -40,19 +40,18 @@
         }
         
         .settings-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         
         .settings-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             color: #aaa;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         
-        .settings-group select,
-        .settings-group input[type="text"] {
+        .settings-group select {
             width: 100%;
             padding: 8px 12px;
             background: #2a2a2a;
@@ -61,10 +60,10 @@
             color: #e0e0e0;
             font-size: 14px;
             transition: border-color 0.3s;
+            cursor: pointer;
         }
         
-        .settings-group select:focus,
-        .settings-group input:focus {
+        .settings-group select:focus {
             outline: none;
             border-color: #3ea6ff;
         }
@@ -73,105 +72,34 @@
             background: #1a1a1a;
         }
         
-        .toggle-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #2a2a2a;
-        }
-        
-        .toggle-group:last-child {
-            border-bottom: none;
-        }
-        
-        .toggle-label {
-            font-size: 13px;
-            color: #ccc;
-        }
-        
-        .toggle {
-            position: relative;
-            width: 44px;
-            height: 24px;
-            background: #333;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.3s;
-            flex-shrink: 0;
-        }
-        
-        .toggle.active {
-            background: #3ea6ff;
-        }
-        
-        .toggle::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-        
-        .toggle.active::after {
-            transform: translateX(20px);
-        }
-        
         .style-preview {
             background: #1a1a1a;
             border: 1px solid #333;
-            border-radius: 10px;
-            padding: 12px;
-            margin: 16px 0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin: 12px 0;
         }
         
         .style-preview .original {
             color: #e0e0e0;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         .style-preview .translation {
             color: #3ea6ff;
-            font-size: 13px;
-            margin-top: 4px;
+            font-size: 12px;
+            margin-top: 3px;
             padding-left: 8px;
             border-left: 2px solid #3ea6ff;
-            opacity: 0.8;
+            opacity: 0.85;
             font-style: italic;
-        }
-        
-        .btn-primary {
-            width: 100%;
-            padding: 10px;
-            background: linear-gradient(90deg, #3ea6ff, #5b8cff);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 8px;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(62, 166, 255, 0.3);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(0);
         }
         
         .stats {
             display: flex;
             justify-content: space-between;
-            margin-top: 12px;
-            padding-top: 12px;
+            margin-top: 10px;
+            padding-top: 10px;
             border-top: 1px solid #2a2a2a;
             font-size: 12px;
             color: #666;
@@ -181,64 +109,59 @@
             color: #3ea6ff;
             font-weight: 600;
         }
+        
+        .footer-note {
+            font-size: 11px;
+            color: #555;
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #222;
+        }
+        
+        .footer-note .highlight {
+            color: #3ea6ff;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <span class="header-icon">🌐</span>
-        <h1>YouTube Translator</h1>
+        <h1 id="appTitle">YouTube Translator</h1>
     </div>
     
-    <!-- Основной язык перевода -->
+    <!-- Выбор языка -->
     <div class="settings-group">
-        <label>🎯 Переводить на язык</label>
+        <label id="labelTargetLang">🎯 Переводить на язык</label>
         <select id="targetLang">
-            <option value="ru">Русский</option>
-            <option value="uk">Українська</option>
-            <option value="en">English</option>
-            <option value="de">Deutsch</option>
-            <option value="fr">Français</option>
-            <option value="es">Español</option>
-            <option value="it">Italiano</option>
-            <option value="pt">Português</option>
-            <option value="zh">中文</option>
-            <option value="ja">日本語</option>
-            <option value="ko">한국어</option>
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="uk">🇺🇦 Українська</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="pt">🇵🇹 Português</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="ko">🇰🇷 한국어</option>
         </select>
     </div>
     
-    <!-- Где переводить -->
-    <div class="settings-group">
-        <label>📌 Переводить</label>
-        <div class="toggle-group">
-            <span class="toggle-label">💬 Комментарии</span>
-            <div class="toggle active" data-setting="comments"></div>
-        </div>
-        <div class="toggle-group">
-            <span class="toggle-label">📡 Чат (стримы / премьеры)</span>
-            <div class="toggle active" data-setting="chat"></div>
-        </div>
-        <div class="toggle-group">
-            <span class="toggle-label">📝 Автоматически</span>
-            <div class="toggle active" data-setting="auto"></div>
-        </div>
-    </div>
-    
     <!-- Превью стиля -->
-    <div class="settings-group">
-        <label>🎨 Как выглядит перевод</label>
-        <div class="style-preview">
-            <div class="original">This is a comment in English</div>
-            <div class="translation">🇷🇺 Это комментарий на английском</div>
-        </div>
+    <div class="style-preview">
+        <div class="original" id="previewOriginal">This is a comment in English</div>
+        <div class="translation" id="previewTranslation">🇷🇺 Это комментарий на английском</div>
     </div>
     
-    <!-- Действия -->
-    <button class="btn-primary" id="translateNow">🔃 Перевести всё сейчас</button>
-    
+    <!-- Статистика -->
     <div class="stats">
-        <span>Переведено: <span id="translatedCount">0</span></span>
-        <span>⚡ API: Google</span>
+        <span id="statsTranslated">Переведено: <span id="translatedCount">0</span></span>
+        <span id="statsApi">⚡ Google Translate</span>
+    </div>
+    
+    <div class="footer-note" id="footerNote">
+        💡 Нажмите <span class="highlight">«🌐 Перевести»</span> под комментарием
     </div>
     
     <script src="popup.js"></script>

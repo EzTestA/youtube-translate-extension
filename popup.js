@@ -1,7 +1,6 @@
-// popup.js — логика управления попапом
+// popup.js — исправленная версия с проверкой
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Загружаем сохранённые настройки
     loadSettings();
     
     // Обработчики для переключателей
@@ -9,27 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
         toggle.addEventListener('click', function() {
             this.classList.toggle('active');
             saveSettings();
-            
-            // Сообщаем content-скрипту об изменении настроек
-            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    type: 'settingsChanged',
-                    settings: getCurrentSettings()
-                });
-            });
+            sendSettingsToTab();
         });
     });
     
     // Обработчик для выбора языка
     document.getElementById('targetLang').addEventListener('change', function() {
         saveSettings();
-        
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                type: 'settingsChanged',
-                settings: getCurrentSettings()
-            });
-        });
+        sendSettingsToTab();
     });
     
     // Кнопка "Перевести всё сейчас"
@@ -38,10 +24,34 @@ document.addEventListener('DOMContentLoaded', function() {
         this.disabled = true;
         
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            if (!tabs[0] || !tabs[0].url) {
+                this.textContent = '❌ Ошибка';
+                setTimeout(() => {
+                    this.textContent = '🔃 Перевести всё сейчас';
+                    this.disabled = false;
+                }, 1500);
+                return;
+            }
+            
+            // Проверяем, что это YouTube
+            if (!tabs[0].url.includes('youtube.com')) {
+                this.textContent = '❌ Не YouTube';
+                setTimeout(() => {
+                    this.textContent = '🔃 Перевести всё сейчас';
+                    this.disabled = false;
+                }, 1500);
+                return;
+            }
+            
             chrome.tabs.sendMessage(tabs[0].id, {
                 type: 'translateAll'
             }, (response) => {
-                this.textContent = '✅ Готово!';
+                if (chrome.runtime.lastError) {
+                    console.log('Ошибка:', chrome.runtime.lastError.message);
+                    this.textContent = '❌ Ошибка';
+                } else {
+                    this.textContent = '✅ Готово!';
+                }
                 setTimeout(() => {
                     this.textContent = '🔃 Перевести всё сейчас';
                     this.disabled = false;
@@ -52,6 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Запрашиваем статистику
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        if (!tabs[0] || !tabs[0].url || !tabs[0].url.includes('youtube.com')) {
+            return;
+        }
+        
         chrome.tabs.sendMessage(tabs[0].id, {
             type: 'getStats'
         }, (response) => {
@@ -61,6 +75,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function sendSettingsToTab() {
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        // Проверяем, что вкладка существует и это YouTube
+        if (!tabs[0] || !tabs[0].url || !tabs[0].url.includes('youtube.com')) {
+            return;
+        }
+        
+        chrome.tabs.sendMessage(tabs[0].id, {
+            type: 'settingsChanged',
+            settings: getCurrentSettings()
+        }).catch(() => {
+            // Игнорируем ошибку
+        });
+    });
+}
 
 function loadSettings() {
     chrome.storage.sync.get(['settings'], (result) => {

@@ -20,21 +20,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 async function translateText(text, targetLang) {
     try {
-        // Кодируем текст для URL — сохраняем переносы строк
         const encodedText = encodeURIComponent(text);
-        
-        // Используем API с параметром dt=t для перевода
         const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodedText}`;
         
         const response = await fetch(url);
-        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
-        
-        // Собираем перевод из всех сегментов
         let fullTranslation = '';
         if (data && data[0]) {
             for (const segment of data[0]) {
@@ -60,16 +54,9 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.get(['settings'], (result) => {
         if (!result.settings) {
             const defaultSettings = {
-                targetLang: 'ru',
-                comments: true,
-                chat: true,
-                auto: true
+                targetLang: 'en'  // ← ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ
             };
             chrome.storage.sync.set({ settings: defaultSettings });
         }
     });
-});
-
-chrome.runtime.onStartup.addListener(() => {
-    console.log('🌐 YouTube Translator запущен!');
 });

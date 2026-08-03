@@ -1,4 +1,4 @@
-// content.js — исправленная версия
+// content.js — с поддержкой чата через кнопки
 
 // ======== НАСТРОЙКИ ПО УМОЛЧАНИЮ ========
 let settings = {
@@ -27,11 +27,10 @@ async function translateText(text, targetLang) {
     });
 }
 
-// ======== ПОИСК КОНТЕЙНЕРА КОММЕНТАРИЯ ========
+// ======== ПОИСК КОНТЕЙНЕРА ========
 
-// Находит родительский контейнер комментария
 function findCommentContainer(element) {
-    let container = element.closest('ytd-comment-view-model, ytd-comment-thread-renderer, #comment, .ytd-comment-renderer, .yt-live-chat-text-message-renderer');
+    let container = element.closest('ytd-comment-view-model, ytd-comment-thread-renderer, #comment, .ytd-comment-renderer');
     
     if (!container) {
         let parent = element.parentElement;
@@ -46,56 +45,55 @@ function findCommentContainer(element) {
             }
         }
     }
-    
     return container;
 }
 
-// Собирает весь текст комментария
+function findChatContainer(element) {
+    return element.closest('yt-live-chat-text-message-renderer');
+}
+
+// ======== СБОР ТЕКСТА ========
+
 function getFullCommentText(container) {
     if (!container) return null;
     
     // Для чата
-    if (container.classList?.contains('yt-live-chat-text-message-renderer')) {
-        const content = container.querySelector('#content, .yt-live-chat-text-message-renderer #content');
-        if (content) {
-            const text = content.textContent.trim();
+    if (container.tagName === 'YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER') {
+        const messageSpan = container.querySelector('#message');
+        if (messageSpan) {
+            let text = messageSpan.textContent.trim();
+            // Убираем эмодзи, оставляем только текст
+            text = text.replace(/[\u{1F000}-\u{1FFFF}]/gu, '').trim();
             return text || null;
         }
         return container.textContent.trim() || null;
     }
     
-    // Для комментариев — ищем #content-text
+    // Для комментариев
     const textContainer = container.querySelector('#content-text, .yt-core-attributed-string, yt-attributed-string#content-text');
     
     if (textContainer) {
-        // Берём текст из span с классом ytAttributedStringHost
         const span = textContainer.querySelector('.ytAttributedStringHost');
         if (span) {
-            // Получаем текст, удаляем лишние пробелы в начале строк, но сохраняем структуру
             let text = span.textContent;
-            // Убираем лишние пробелы в начале каждой строки, но сохраняем переносы
             text = text.split('\n').map(line => line.trim()).join('\n');
             return text || null;
         }
-        
-        // Если span не нашёлся, берём весь текст
         const text = textContainer.textContent.trim();
         if (text) return text;
     }
     
-    // Если не нашли — пробуем найти любой текстовый элемент
     const possibleText = container.querySelector('#content-text, .yt-core-attributed-string, yt-attributed-string');
     if (possibleText) {
         return possibleText.textContent.trim() || null;
     }
     
-    // Последняя попытка — весь текст контейнера
     return container.textContent.trim() || null;
 }
 
-// ======== ДИЗАЙН: ЭЛЕМЕНТЫ ПЕРЕВОДА ========
+// ======== ДИЗАЙН ========
 
-function createTranslateButton(container, text) {
+function createTranslateButton(container, text, isChat = false) {
     const button = document.createElement('button');
     button.className = 'yt-translator-btn';
     button.textContent = '🌐 Перевести';
@@ -103,10 +101,10 @@ function createTranslateButton(container, text) {
         background: none;
         border: none;
         color: #3ea6ff;
-        font-size: 12px;
+        font-size: ${isChat ? '11px' : '12px'};
         cursor: pointer;
-        padding: 4px 8px;
-        margin-left: 8px;
+        padding: ${isChat ? '2px 6px' : '4px 8px'};
+        margin-left: ${isChat ? '4px' : '8px'};
         border-radius: 4px;
         transition: background 0.2s;
         font-weight: 500;
@@ -124,21 +122,21 @@ function createTranslateButton(container, text) {
     button.addEventListener('click', async (e) => {
         e.stopPropagation();
         e.preventDefault();
-        await translateSingleComment(container, text);
+        await translateSingleComment(container, text, isChat);
     });
     
     return button;
 }
 
-function createTranslationElement(text, targetLang) {
+function createTranslationElement(text, targetLang, isChat = false) {
     const div = document.createElement('div');
     div.className = 'yt-translator-translation';
     div.style.cssText = `
         color: #3ea6ff;
-        font-size: 13px;
-        margin-top: 4px;
-        padding: 6px 12px 6px 16px;
-        border-left: 3px solid #3ea6ff;
+        font-size: ${isChat ? '12px' : '13px'};
+        margin-top: ${isChat ? '2px' : '4px'};
+        padding: ${isChat ? '4px 8px 4px 12px' : '6px 12px 6px 16px'};
+        border-left: 2px solid #3ea6ff;
         opacity: 0.9;
         font-style: italic;
         background: rgba(62, 166, 255, 0.05);
@@ -146,16 +144,14 @@ function createTranslationElement(text, targetLang) {
         animation: fadeIn 0.3s ease;
         display: flex;
         align-items: flex-start;
-        gap: 8px;
-        line-height: 1.5;
+        gap: 6px;
+        line-height: ${isChat ? '1.3' : '1.5'};
         white-space: pre-wrap;
         word-break: break-word;
         width: 100%;
         box-sizing: border-box;
     `;
     
-    // Иконка языка
-    const flagIcon = document.createElement('span');
     const flags = {
         'ru': '🇷🇺',
         'uk': '🇺🇦',
@@ -169,30 +165,29 @@ function createTranslationElement(text, targetLang) {
         'ja': '🇯🇵',
         'ko': '🇰🇷'
     };
+    
+    const flagIcon = document.createElement('span');
     flagIcon.textContent = flags[targetLang] || '🌐';
     flagIcon.style.cssText = `
         flex-shrink: 0;
-        font-size: 14px;
-        margin-top: 2px;
+        font-size: ${isChat ? '12px' : '14px'};
+        margin-top: 1px;
     `;
     
     const textSpan = document.createElement('span');
     textSpan.textContent = text;
-    textSpan.style.cssText = `
-        flex: 1;
-    `;
+    textSpan.style.cssText = 'flex: 1;';
     
     div.appendChild(flagIcon);
     div.appendChild(textSpan);
     
-    // Кнопка скрытия
     const hideButton = document.createElement('button');
     hideButton.textContent = '✕';
     hideButton.style.cssText = `
         background: none;
         border: none;
         color: #666;
-        font-size: 14px;
+        font-size: ${isChat ? '11px' : '14px'};
         cursor: pointer;
         padding: 0 4px;
         margin-left: auto;
@@ -215,14 +210,14 @@ function createTranslationElement(text, targetLang) {
     return div;
 }
 
-function createLoadingIndicator() {
+function createLoadingIndicator(isChat = false) {
     const div = document.createElement('div');
     div.className = 'yt-translator-loading';
     div.style.cssText = `
         color: #888;
-        font-size: 12px;
-        margin-top: 4px;
-        padding-left: 16px;
+        font-size: ${isChat ? '11px' : '12px'};
+        margin-top: ${isChat ? '2px' : '4px'};
+        padding-left: ${isChat ? '10px' : '16px'};
         font-style: italic;
         animation: pulse 1.5s ease-in-out infinite;
     `;
@@ -232,11 +227,28 @@ function createLoadingIndicator() {
 
 // ======== ОСНОВНАЯ ЛОГИКА ========
 
+function findChatContainers() {
+    const containers = [];
+    const seen = new Set();
+    
+    if (settings.chat) {
+        const chatMessages = document.querySelectorAll('yt-live-chat-text-message-renderer');
+        chatMessages.forEach(el => {
+            if (!seen.has(el)) {
+                if (el.hidden || el.style.display === 'none') return;
+                seen.add(el);
+                containers.push(el);
+            }
+        });
+    }
+    
+    return containers;
+}
+
 function findCommentContainers() {
     const containers = [];
     const seen = new Set();
     
-    // Комментарии — ищем ytd-comment-view-model
     if (settings.comments) {
         const commentModels = document.querySelectorAll('ytd-comment-view-model');
         commentModels.forEach(el => {
@@ -246,24 +258,12 @@ function findCommentContainers() {
             }
         });
         
-        // Запасной вариант: ищем через #content-text
         const textElements = document.querySelectorAll('#content-text, yt-attributed-string#content-text');
         textElements.forEach(el => {
             const container = findCommentContainer(el);
             if (container && !seen.has(container)) {
                 seen.add(container);
                 containers.push(container);
-            }
-        });
-    }
-    
-    // Чат
-    if (settings.chat) {
-        const chatMessages = document.querySelectorAll('.yt-live-chat-text-message-renderer');
-        chatMessages.forEach(el => {
-            if (!seen.has(el)) {
-                seen.add(el);
-                containers.push(el);
             }
         });
     }
@@ -275,60 +275,76 @@ function hasTranslateButton(container) {
     return container.querySelector('.yt-translator-btn') !== null;
 }
 
+function hasTranslation(container) {
+    return container.querySelector('.yt-translator-translation') !== null;
+}
+
 function addTranslateButtons() {
-    const containers = findCommentContainers();
-    
-    containers.forEach(container => {
-        if (hasTranslateButton(container)) {
-            return;
-        }
+    // ===== ЧАТ =====
+    const chatContainers = findChatContainers();
+    chatContainers.forEach(container => {
+        if (hasTranslateButton(container)) return;
         
         const text = getFullCommentText(container);
         if (!text || text.length < 1) return;
         
-        // Ищем место для вставки кнопки — в заголовке комментария
-        let insertPoint = container.querySelector('#header, #author-text, .ytd-comment-view-model #header');
-        
-        // Если не нашли, ищем author-text
+        let insertPoint = container.querySelector('#author-name, yt-live-chat-author-chip');
         if (!insertPoint) {
-            insertPoint = container.querySelector('[id*="author"], [id*="header"]');
+            insertPoint = container.querySelector('#content, .yt-live-chat-text-message-renderer #content');
         }
-        
-        // Если всё ещё не нашли, используем сам контейнер
         if (!insertPoint) {
             insertPoint = container;
         }
         
-        const button = createTranslateButton(container, text);
+        const button = createTranslateButton(container, text, true);
+        insertPoint.appendChild(button);
+    });
+    
+    // ===== КОММЕНТАРИИ =====
+    const commentContainers = findCommentContainers();
+    commentContainers.forEach(container => {
+        if (hasTranslateButton(container)) return;
+        
+        const text = getFullCommentText(container);
+        if (!text || text.length < 1) return;
+        
+        let insertPoint = container.querySelector('#header, #author-text, .ytd-comment-view-model #header');
+        if (!insertPoint) {
+            insertPoint = container.querySelector('[id*="author"], [id*="header"]');
+        }
+        if (!insertPoint) {
+            insertPoint = container;
+        }
+        
+        const button = createTranslateButton(container, text, false);
         insertPoint.appendChild(button);
     });
 }
 
-async function translateSingleComment(container, text) {
-    // Проверяем, есть ли уже перевод
-    const existingTranslation = container.querySelector('.yt-translator-translation');
-    if (existingTranslation) {
-        existingTranslation.remove();
+async function translateSingleComment(container, text, isChat = false) {
+    if (hasTranslation(container)) {
+        const existing = container.querySelector('.yt-translator-translation');
+        if (existing) existing.remove();
         return;
     }
     
-    // Находим место для вставки перевода
-    let textContainer = container.querySelector('#content-text, .yt-core-attributed-string, yt-attributed-string#content-text');
-    if (!textContainer) {
-        textContainer = container;
+    let textContainer;
+    if (isChat) {
+        textContainer = container.querySelector('#message-container, #content, .yt-live-chat-text-message-renderer #content');
+        if (!textContainer) textContainer = container;
+    } else {
+        textContainer = container.querySelector('#content-text, .yt-core-attributed-string, yt-attributed-string#content-text');
+        if (!textContainer) textContainer = container;
     }
     
-    // Добавляем индикатор загрузки
-    const loadingIndicator = createLoadingIndicator();
+    const loadingIndicator = createLoadingIndicator(isChat);
     textContainer.parentElement.insertBefore(loadingIndicator, textContainer.nextSibling);
     
     try {
-        // Отправляем текст с сохранением переносов строк
         const translation = await translateText(text, settings.targetLang);
-        
         loadingIndicator.remove();
         
-        const translationElement = createTranslationElement(translation, settings.targetLang);
+        const translationElement = createTranslationElement(translation, settings.targetLang, isChat);
         textContainer.parentElement.insertBefore(translationElement, textContainer.nextSibling);
         
         translatedCount++;
@@ -336,24 +352,32 @@ async function translateSingleComment(container, text) {
         
     } catch (error) {
         loadingIndicator.remove();
-        showError(container, 'Ошибка перевода');
+        showError(container, 'Ошибка перевода', isChat);
         console.error('Translation error:', error);
     }
 }
 
 async function translateAll() {
-    const containers = findCommentContainers();
     let count = 0;
     
-    for (const container of containers) {
-        if (container.querySelector('.yt-translator-translation')) {
-            continue;
-        }
-        
+    // Чат
+    const chatContainers = findChatContainers();
+    for (const container of chatContainers) {
+        if (hasTranslation(container)) continue;
         const text = getFullCommentText(container);
         if (!text || text.length < 2) continue;
-        
-        await translateSingleComment(container, text);
+        await translateSingleComment(container, text, true);
+        count++;
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    // Комментарии
+    const commentContainers = findCommentContainers();
+    for (const container of commentContainers) {
+        if (hasTranslation(container)) continue;
+        const text = getFullCommentText(container);
+        if (!text || text.length < 2) continue;
+        await translateSingleComment(container, text, false);
         count++;
         await new Promise(resolve => setTimeout(resolve, 150));
     }
@@ -361,13 +385,13 @@ async function translateAll() {
     return count;
 }
 
-function showError(container, message) {
+function showError(container, message, isChat = false) {
     const errorDiv = document.createElement('div');
     errorDiv.style.cssText = `
         color: #ff6b6b;
-        font-size: 12px;
-        margin-top: 4px;
-        padding-left: 16px;
+        font-size: ${isChat ? '11px' : '12px'};
+        margin-top: ${isChat ? '2px' : '4px'};
+        padding-left: ${isChat ? '10px' : '16px'};
     `;
     errorDiv.textContent = `⚠️ ${message}`;
     container.appendChild(errorDiv);
@@ -384,7 +408,7 @@ function updateStats() {
     });
 }
 
-// ======== CSS АНИМАЦИИ ========
+// ======== CSS ========
 
 function addStyles() {
     if (document.getElementById('yt-translator-styles')) return;
@@ -393,24 +417,14 @@ function addStyles() {
     style.id = 'yt-translator-styles';
     style.textContent = `
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-5px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-3px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
         @keyframes pulse {
             0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
         }
-        
-        .yt-translator-translation {
-            animation: fadeIn 0.3s ease;
-        }
+        .yt-translator-translation { animation: fadeIn 0.3s ease; }
     `;
     document.head.appendChild(style);
 }
@@ -426,7 +440,7 @@ function setupObserver() {
             if (settings.auto) {
                 addTranslateButtons();
             }
-        }, 500);
+        }, 300);
     });
     
     observer.observe(document.body, {
@@ -468,7 +482,7 @@ chrome.storage.sync.get(['settings'], (result) => {
     addStyles();
     setupObserver();
     
-    // Ждём загрузки
+    // Первоначальная загрузка
     setTimeout(() => {
         addTranslateButtons();
     }, 2000);
@@ -476,6 +490,13 @@ chrome.storage.sync.get(['settings'], (result) => {
     setTimeout(() => {
         addTranslateButtons();
     }, 5000);
+    
+    // Для чата — частая проверка
+    setInterval(() => {
+        if (settings.chat && settings.auto) {
+            addTranslateButtons();
+        }
+    }, 3000);
 });
 
-console.log('🌐 YouTube Translator v2 загружен!');
+console.log('🌐 YouTube Translator v3 (с поддержкой чата) загружен!');
