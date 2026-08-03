@@ -54,7 +54,7 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.get(['settings'], (result) => {
         if (!result.settings) {
             const defaultSettings = {
-                targetLang: 'en'  // ← ПО УМОЛЧАНИЮ АНГЛИЙСКИЙ
+                targetLang: 'en'
             };
             chrome.storage.sync.set({ settings: defaultSettings });
         }

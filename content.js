@@ -10,6 +10,25 @@ let settings = {
 
 let translatedCount = 0;
 
+// ======== ПЕРЕВОДЫ КНОПОК ========
+const buttonTranslations = {
+    'ru': '🌐 Перевести',
+    'uk': '🌐 Перекласти',
+    'en': '🌐 Translate',
+    'de': '🌐 Übersetzen',
+    'fr': '🌐 Traduire',
+    'es': '🌐 Traducir',
+    'it': '🌐 Traduci',
+    'pt': '🌐 Traduzir',
+    'zh': '🌐 翻译',
+    'ja': '🌐 翻訳',
+    'ko': '🌐 번역'
+};
+
+function getTranslateButtonText(lang) {
+    return buttonTranslations[lang] || '🌐 Перевести';
+}
+
 // ======== ФУНКЦИЯ ПЕРЕВОДА ЧЕРЕЗ BACKGROUND ========
 async function translateText(text, targetLang) {
     return new Promise((resolve, reject) => {
@@ -96,7 +115,7 @@ function getFullCommentText(container) {
 function createTranslateButton(container, text, isChat = false) {
     const button = document.createElement('button');
     button.className = 'yt-translator-btn';
-    button.textContent = '🌐 Перевести';
+    button.textContent = getTranslateButtonText(settings.targetLang);
     button.style.cssText = `
         background: none;
         border: none;
@@ -454,9 +473,9 @@ function setupObserver() {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'settingsChanged') {
         settings = { ...settings, ...request.settings };
-        if (settings.auto) {
-            addTranslateButtons();
-        }
+        document.querySelectorAll('.yt-translator-btn').forEach(btn => {
+            btn.textContent = getTranslateButtonText(settings.targetLang);
+        });
         sendResponse({ success: true });
     }
     
