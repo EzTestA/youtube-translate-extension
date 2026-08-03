@@ -2,7 +2,7 @@
 
 // ======== НАСТРОЙКИ ПО УМОЛЧАНИЮ ========
 let settings = {
-    targetLang: 'ru',
+    targetLang: 'en',
     comments: true,
     chat: true,
     auto: true

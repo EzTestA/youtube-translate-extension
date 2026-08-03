@@ -1,4 +1,4 @@
-// popup.js — с переводом интерфейса
+// popup.js — с полным переводом интерфейса
 
 // ======== ПЕРЕВОДЫ ИНТЕРФЕЙСА ========
 const uiTranslations = {
@@ -9,8 +9,7 @@ const uiTranslations = {
         previewTranslation: '🇷🇺 Это комментарий на английском',
         statsTranslated: 'Переведено: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Нажмите «🌐 Перевести» под комментарием',
-        translateButton: '🌐 Перевести'
+        footerNote: '💡 Нажмите «🌐 Перевести» под комментарием'
     },
     'uk': {
         appTitle: 'YouTube Translator',
@@ -19,8 +18,7 @@ const uiTranslations = {
         previewTranslation: '🇺🇦 Це коментар англійською',
         statsTranslated: 'Перекладено: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Натисніть «🌐 Перекласти» під коментарем',
-        translateButton: '🌐 Перекласти'
+        footerNote: '💡 Натисніть «🌐 Перекласти» під коментарем'
     },
     'en': {
         appTitle: 'YouTube Translator',
@@ -29,8 +27,7 @@ const uiTranslations = {
         previewTranslation: '🇬🇧 This is a comment in English',
         statsTranslated: 'Translated: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Click «🌐 Translate» under the comment',
-        translateButton: '🌐 Translate'
+        footerNote: '💡 Click «🌐 Translate» under the comment'
     },
     'de': {
         appTitle: 'YouTube Translator',
@@ -39,8 +36,7 @@ const uiTranslations = {
         previewTranslation: '🇩🇪 Dies ist ein Kommentar auf Englisch',
         statsTranslated: 'Übersetzt: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Klicken Sie auf «🌐 Übersetzen» unter dem Kommentar',
-        translateButton: '🌐 Übersetzen'
+        footerNote: '💡 Klicken Sie auf «🌐 Übersetzen» unter dem Kommentar'
     },
     'fr': {
         appTitle: 'YouTube Translator',
@@ -49,8 +45,7 @@ const uiTranslations = {
         previewTranslation: '🇫🇷 Ceci est un commentaire en anglais',
         statsTranslated: 'Traduit: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Cliquez sur «🌐 Traduire» sous le commentaire',
-        translateButton: '🌐 Traduire'
+        footerNote: '💡 Cliquez sur «🌐 Traduire» sous le commentaire'
     },
     'es': {
         appTitle: 'YouTube Translator',
@@ -59,8 +54,7 @@ const uiTranslations = {
         previewTranslation: '🇪🇸 Este es un comentario en inglés',
         statsTranslated: 'Traducido: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Haz clic en «🌐 Traducir» debajo del comentario',
-        translateButton: '🌐 Traducir'
+        footerNote: '💡 Haz clic en «🌐 Traducir» debajo del comentario'
     },
     'it': {
         appTitle: 'YouTube Translator',
@@ -69,8 +63,7 @@ const uiTranslations = {
         previewTranslation: '🇮🇹 Questo è un commento in inglese',
         statsTranslated: 'Tradotto: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Clicca su «🌐 Traduci» sotto il commento',
-        translateButton: '🌐 Traduci'
+        footerNote: '💡 Clicca su «🌐 Traduci» sotto il commento'
     },
     'pt': {
         appTitle: 'YouTube Translator',
@@ -79,8 +72,7 @@ const uiTranslations = {
         previewTranslation: '🇵🇹 Este é um comentário em inglês',
         statsTranslated: 'Traduzido: {count}',
         statsApi: '⚡ Google Translate',
-        footerNote: '💡 Clique em «🌐 Traduzir» sob o comentário',
-        translateButton: '🌐 Traduzir'
+        footerNote: '💡 Clique em «🌐 Traduzir» sob o comentário'
     },
     'zh': {
         appTitle: 'YouTube 翻译器',
@@ -89,8 +81,7 @@ const uiTranslations = {
         previewTranslation: '🇨🇳 这是英文评论',
         statsTranslated: '已翻译: {count}',
         statsApi: '⚡ Google 翻译',
-        footerNote: '💡 点击评论下方的 «🌐 翻译»',
-        translateButton: '🌐 翻译'
+        footerNote: '💡 点击评论下方的 «🌐 翻译»'
     },
     'ja': {
         appTitle: 'YouTube 翻訳者',
@@ -99,8 +90,7 @@ const uiTranslations = {
         previewTranslation: '🇯🇵 これは英語のコメントです',
         statsTranslated: '翻訳済み: {count}',
         statsApi: '⚡ Google 翻訳',
-        footerNote: '💡 コメントの下の «🌐 翻訳» をクリック',
-        translateButton: '🌐 翻訳'
+        footerNote: '💡 コメントの下の «🌐 翻訳» をクリック'
     },
     'ko': {
         appTitle: 'YouTube 번역기',
@@ -109,49 +99,82 @@ const uiTranslations = {
         previewTranslation: '🇰🇷 이것은 영어 댓글입니다',
         statsTranslated: '번역됨: {count}',
         statsApi: '⚡ Google 번역',
-        footerNote: '💡 댓글 아래 «🌐 번역»을 클릭하세요',
-        translateButton: '🌐 번역'
+        footerNote: '💡 댓글 아래 «🌐 번역»을 클릭하세요'
     }
 };
 
-// Текущий язык для кнопок
+// Текущий язык
 let currentLang = 'en';
 
+// ======== БЕЗОПАСНОЕ ПОЛУЧЕНИЕ ЭЛЕМЕНТОВ ========
+function getElement(id) {
+    return document.getElementById(id);
+}
+
+function setText(id, text) {
+    const el = getElement(id);
+    if (el) el.textContent = text;
+}
+
+function setHTML(id, html) {
+    const el = getElement(id);
+    if (el) el.innerHTML = html;
+}
+
+function getValue(id) {
+    const el = getElement(id);
+    return el ? el.value : 'en';
+}
+
+// ======== ИНИЦИАЛИЗАЦИЯ ========
 document.addEventListener('DOMContentLoaded', function() {
     loadSettings();
     updateUI();
+    updateStats();
     
     // Обработчик для выбора языка
-    document.getElementById('targetLang').addEventListener('change', function() {
-        saveSettings();
-        updateUI();
-        sendSettingsToTab();
-    });
-    
-    // Запрашиваем статистику
-    updateStats();
+    const targetLang = getElement('targetLang');
+    if (targetLang) {
+        targetLang.addEventListener('change', function() {
+            const lang = this.value;
+            currentLang = lang;
+            saveSettings();
+            updateUI();
+            updateStats();
+            sendSettingsToTab();
+        });
+    }
 });
 
 function updateUI() {
-    const lang = document.getElementById('targetLang').value;
+    const lang = getValue('targetLang');
     currentLang = lang;
     const t = uiTranslations[lang] || uiTranslations['en'];
     
-    document.getElementById('appTitle').textContent = t.appTitle;
-    document.getElementById('labelTargetLang').textContent = t.labelTargetLang;
-    document.getElementById('previewOriginal').textContent = t.previewOriginal;
-    document.getElementById('previewTranslation').textContent = t.previewTranslation;
-    document.getElementById('statsApi').textContent = t.statsApi;
-    document.getElementById('footerNote').innerHTML = t.footerNote;
+    setText('appTitle', t.appTitle);
+    setText('labelTargetLang', t.labelTargetLang);
+    setText('previewOriginal', t.previewOriginal);
+    setText('previewTranslation', t.previewTranslation);
+    setText('statsApi', t.statsApi);
+    setHTML('footerNote', t.footerNote);
     
-    // Обновляем статистику с переводом
-    const count = document.getElementById('translatedCount').textContent || '0';
-    document.getElementById('statsTranslated').textContent = t.statsTranslated.replace('{count}', count);
+    updateStatsText();
+}
+
+function updateStatsText() {
+    const lang = getValue('targetLang');
+    const t = uiTranslations[lang] || uiTranslations['en'];
+    const countEl = getElement('translatedCount');
+    const count = countEl ? countEl.textContent : '0';
+    const statsEl = getElement('statsTranslated');
+    if (statsEl) {
+        statsEl.textContent = t.statsTranslated.replace('{count}', count);
+    }
 }
 
 function sendSettingsToTab() {
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        if (!tabs[0] || !tabs[0].url || !tabs[0].url.includes('youtube.com')) {
+        if (!tabs || tabs.length === 0 || !tabs[0] || !tabs[0].url || !tabs[0].url.includes('youtube.com')) {
             return;
         }
         
@@ -168,7 +191,11 @@ function loadSettings() {
             targetLang: 'en'
         };
         
-        document.getElementById('targetLang').value = settings.targetLang;
+        const targetLang = getElement('targetLang');
+        if (targetLang) {
+            targetLang.value = settings.targetLang;
+        }
+        currentLang = settings.targetLang;
     });
 }
 
@@ -179,17 +206,18 @@ function saveSettings() {
 
 function getCurrentSettings() {
     return {
-        targetLang: document.getElementById('targetLang').value
+        targetLang: getValue('targetLang')
     };
 }
 
 function updateStats() {
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        if (!tabs[0] || !tabs[0].url || !tabs[0].url.includes('youtube.com')) {
-            document.getElementById('translatedCount').textContent = '0';
-            const lang = document.getElementById('targetLang').value;
-            const t = uiTranslations[lang] || uiTranslations['en'];
-            document.getElementById('statsTranslated').textContent = t.statsTranslated.replace('{count}', '0');
+        const countEl = getElement('translatedCount');
+        if (!countEl) return;
+        
+        if (!tabs || tabs.length === 0 || !tabs[0] || !tabs[0].url || !tabs[0].url.includes('youtube.com')) {
+            countEl.textContent = '0';
+            updateStatsText();
             return;
         }
         
@@ -197,11 +225,8 @@ function updateStats() {
             type: 'getStats'
         }, (response) => {
             const count = (response && response.count !== undefined) ? response.count : 0;
-            document.getElementById('translatedCount').textContent = count;
-            
-            const lang = document.getElementById('targetLang').value;
-            const t = uiTranslations[lang] || uiTranslations['en'];
-            document.getElementById('statsTranslated').textContent = t.statsTranslated.replace('{count}', count);
+            countEl.textContent = count;
+            updateStatsText();
         });
     });
 }
