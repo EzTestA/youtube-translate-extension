@@ -11,7 +11,7 @@
         
         body {
             width: 280px;
-            min-height: 240px;
+            min-height: 260px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
             color: #e0e0e0;
@@ -122,6 +122,34 @@
         .footer-note .highlight {
             color: #3ea6ff;
         }
+        
+        .github-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #222;
+            font-size: 12px;
+        }
+        
+        .github-link a {
+            color: #8b949e;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .github-link a:hover {
+            color: #3ea6ff;
+        }
+        
+        .github-link .github-icon {
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -162,6 +190,14 @@
     
     <div class="footer-note" id="footerNote">
         💡 Нажмите <span class="highlight">«🌐 Перевести»</span> под комментарием
+    </div>
+    
+    <!-- Ссылка на GitHub -->
+    <div class="github-link">
+        <span class="github-icon">🐙</span>
+        <a href="https://github.com/EzTestA/youtube-translate-extension" target="_blank">
+            GitHub
+        </a>
     </div>
     
     <script src="popup.js"></script>
