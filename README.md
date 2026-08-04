@@ -1,6 +1,8 @@
 # 🌐 YouTube Translate Extension
 
-[🇬🇧 English](#english-version) • [🇷🇺 Русский](#russian-version)
+[🇬🇧 English](#english-version) • [🇷🇺 Русский](#russian-version) • [🦊 Firefox version](https://github.com/EzTestA/youtube-translate-extension-firefox)
+
+> 🦊 **Firefox version / Версия для Firefox:** a separate version of this extension is available in the [youtube-translate-extension-firefox](https://github.com/EzTestA/youtube-translate-extension-firefox) repository.
 
 <a id="english-version"></a>
 
@@ -12,7 +14,7 @@
 
 ## 📖 Description
 
-![YouTube Translator](https://img.shields.io/badge/YouTube-Translator-blue) ![Version](https://img.shields.io/badge/version-0.1.0-green) ![License](https://img.shields.io/badge/license-MIT-orange)
+![YouTube Translator](https://img.shields.io/badge/YouTube-Translator-blue) ![Version](https://img.shields.io/badge/version-0.1.1-green) ![License](https://img.shields.io/badge/license-MIT-orange)
 
 **YouTube Translate Extension** is a browser extension that adds the ability to translate comments and live chat on YouTube using the Google Translate API.
 
@@ -124,7 +126,7 @@ This project is licensed under the **MIT License** — feel free to use, modify,
 
 ## 📖 Описание
 
-![YouTube Translator](https://img.shields.io/badge/YouTube-Translator-blue) ![Version](https://img.shields.io/badge/version-0.1.0-green) ![License](https://img.shields.io/badge/license-MIT-orange)
+![YouTube Translator](https://img.shields.io/badge/YouTube-Translator-blue) ![Version](https://img.shields.io/badge/version-0.1.1-green) ![License](https://img.shields.io/badge/license-MIT-orange)
 
 **YouTube Translate Extension** — это расширение для браузера, которое позволяет переводить комментарии и чат на YouTube с использованием Google Translate API.
 
