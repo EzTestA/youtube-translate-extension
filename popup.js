@@ -1,4 +1,4 @@
-// popup.js — с полным переводом интерфейса
+// popup.js — с фиксом сохранения языка
 
 // ======== ПЕРЕВОДЫ ИНТЕРФЕЙСА ========
 const uiTranslations = {
@@ -103,7 +103,6 @@ const uiTranslations = {
     }
 };
 
-// Текущий язык
 let currentLang = 'en';
 
 // ======== БЕЗОПАСНОЕ ПОЛУЧЕНИЕ ЭЛЕМЕНТОВ ========
@@ -128,11 +127,9 @@ function getValue(id) {
 
 // ======== ИНИЦИАЛИЗАЦИЯ ========
 document.addEventListener('DOMContentLoaded', function() {
-    loadSettings();
-    updateUI();
-    updateStats();
+    // Сначала грузим настройки, потом обновляем UI
+    loadSettingsAndInit();
     
-    // Обработчик для выбора языка
     const targetLang = getElement('targetLang');
     if (targetLang) {
         targetLang.addEventListener('change', function() {
@@ -145,6 +142,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function loadSettingsAndInit() {
+    const storage = typeof browser !== 'undefined' ? browser.storage : chrome.storage;
+    storage.sync.get(['settings']).then((result) => {
+        const settings = result.settings || { targetLang: 'en' };
+        
+        const targetLang = getElement('targetLang');
+        if (targetLang) {
+            targetLang.value = settings.targetLang;
+        }
+        currentLang = settings.targetLang;
+        
+        // Теперь, когда язык загружен, обновляем весь UI
+        updateUI();
+        updateStats();
+    }).catch(() => {
+        // Если ошибка — используем английский по умолчанию
+        const targetLang = getElement('targetLang');
+        if (targetLang) {
+            targetLang.value = 'en';
+        }
+        currentLang = 'en';
+        updateUI();
+        updateStats();
+    });
+}
 
 function updateUI() {
     const lang = getValue('targetLang');
@@ -173,35 +196,25 @@ function updateStatsText() {
 }
 
 function sendSettingsToTab() {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    const storage = typeof browser !== 'undefined' ? browser.storage : chrome.storage;
+    const tabs = typeof browser !== 'undefined' ? browser.tabs : chrome.tabs;
+    
+    tabs.query({active: true, currentWindow: true}).then((tabs) => {
         if (!tabs || tabs.length === 0 || !tabs[0] || !tabs[0].url || !tabs[0].url.includes('youtube.com')) {
             return;
         }
         
-        chrome.tabs.sendMessage(tabs[0].id, {
+        tabs.sendMessage(tabs[0].id, {
             type: 'settingsChanged',
             settings: getCurrentSettings()
         }).catch(() => {});
     });
 }
 
-function loadSettings() {
-    chrome.storage.sync.get(['settings'], (result) => {
-        const settings = result.settings || {
-            targetLang: 'en'
-        };
-        
-        const targetLang = getElement('targetLang');
-        if (targetLang) {
-            targetLang.value = settings.targetLang;
-        }
-        currentLang = settings.targetLang;
-    });
-}
-
 function saveSettings() {
+    const storage = typeof browser !== 'undefined' ? browser.storage : chrome.storage;
     const settings = getCurrentSettings();
-    chrome.storage.sync.set({ settings });
+    storage.sync.set({ settings });
 }
 
 function getCurrentSettings() {
@@ -211,7 +224,9 @@ function getCurrentSettings() {
 }
 
 function updateStats() {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    const tabs = typeof browser !== 'undefined' ? browser.tabs : chrome.tabs;
+    
+    tabs.query({active: true, currentWindow: true}).then((tabs) => {
         const countEl = getElement('translatedCount');
         if (!countEl) return;
         
@@ -221,11 +236,14 @@ function updateStats() {
             return;
         }
         
-        chrome.tabs.sendMessage(tabs[0].id, {
+        tabs.sendMessage(tabs[0].id, {
             type: 'getStats'
-        }, (response) => {
+        }).then((response) => {
             const count = (response && response.count !== undefined) ? response.count : 0;
             countEl.textContent = count;
+            updateStatsText();
+        }).catch(() => {
+            countEl.textContent = '0';
             updateStatsText();
         });
     });
